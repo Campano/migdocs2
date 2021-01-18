@@ -72,6 +72,7 @@ Pour (i allant de 1 à nbrAction){
 Déclarer la variable "répertoire origine"
 Déclarer la variable "répertoire cible"
 Créer la catégorie "CTG_50_docs" et son fichier json dans le répertoire cible
+    Si il y a une problème lors de la création, renvoyez erreur
 Ouvrir le dossier "répertoire origine"
 Pour chaque fichier du dossier "répertoire origine"
     Si c'est un dossier
@@ -81,14 +82,24 @@ Pour chaque fichier du dossier "répertoire origine"
         Pour chaque fichier du dossier
         Si c'est un fichier ".md"
             Lire le nom du fichier ".md" (du type basic-code-examples.md)
-            Détecter le nom de la catégorie (Basic code example)
+            Détecter le nom de la leçon (Basic code example -> Remplacer les tirets par des espaces et mettre la première lettre en majuscule)
+                Si le nom n'est pas détectable, renvoyer erreur
             Créez la leçon (type "LSN_01_basics-code-examples) avec son fichier "basic-code-examples.md" et son fichier json
-            Regarder dans le dossier s'il possède des fichiers ".png" en faisant une recherche par nom, si oui les déplacer vers sa "lesson correspondante"
+                Si il y a une problème lors de la création, renvoyez erreur
+            Aller dans le fichier ".md" et regarder si il appelle un ou plusieurs fichier(s) png
+                Si oui, alors déplacer les fichiers png en question de la catégorie "mère" vers la "lesson" du fichier actuel
+                Si le png est inexistant renvoyer erreur 
     Si c'est un fichier ".md"
         Lire le nom du fichier ".md" (du type architecture.md)
         Détecter le nom de la catégorie (Architecture)
+            Si le nom n'est pas détectable, renvoyer erreur
         Créez la leçon (type "LSN_01_architecture) avec son fichier "LSN_01_architecture.md" et son fichier json
-        Regarder dans le dossier s'il possède des fichiers ".png" en faisant une recherche par nom, si oui les déplacer vers sa "lesson correspondante"
+            Si il y a une problème lors de la création, renvoyez erreur
+        Aller dans le fichier ".md" et regarder si il appelle un ou plusieurs fichier(s) png
+            Si oui, alors déplacer les fichiers png en question de la catégorie "mère" vers la "lesson" du fichier actuel
+            Si le png est inexistant renvoyer erreur
+    Si autre type de fichier 
+        Renvoyer une erreur
 
     
 
