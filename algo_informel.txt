@@ -51,7 +51,12 @@ Pour (i allant de 1 à nbrAction){
             }
  		Créer fichier JSON "lesson.json" dans dossier new+i
  		écrire dans JSON 
- 		"{
+ 		
+    }
+
+}
+
+"{
     "display": "LINEAR",
     "ANY": {
       "title": nom,
@@ -62,6 +67,29 @@ Pour (i allant de 1 à nbrAction){
       "description": ""
     }
   }"
-    }
 
-}
+// V3
+Déclarer la variable "répertoire origine"
+Déclarer la variable "répertoire cible"
+Créer la catégorie "CTG_50_docs" et son fichier json dans le répertoire cible
+Ouvrir le dossier "répertoire origine"
+Pour chaque fichier du dossier "répertoire origine"
+    Si c'est un dossier
+        Lire le nom du dossier (du type "01-core")
+        Détecter le nom de la catégorie ("core")
+        Créer la catégorie (type "CTG_10_core") et json fichier json dans "CTG_50_docs"
+        Pour chaque fichier du dossier
+        Si c'est un fichier ".md"
+            Lire le nom du fichier ".md" (du type basic-code-examples.md)
+            Détecter le nom de la catégorie (Basic code example)
+            Créez la leçon (type "LSN_01_basics-code-examples) avec son fichier "basic-code-examples.md" et son fichier json
+    Si c'est un fichier ".md"
+        Lire le nom du fichier ".md" (du type architecture.md)
+        Détecter le nom de la catégorie (Architecture)
+        Créez la leçon (type "LSN_01_architecture) avec son fichier "LSN_01_architecture.md" et son fichier json
+        Regarder dans le dossier s'il possède des fichiers ".png" en faisant une recherche par nom, si oui les déplacer vers sa "lesson correspondante"
+         
+    
+
+
+
