@@ -1,0 +1,67 @@
+//BROUILLON
+Ouvrir DOSSIER "Doc";
+nbrFile = Compte nbr de fichier dans Doc;
+Pour (i allant de 1 à nbrFile){
+		Ouvrir fichier i;
+		nom = getNom(i);
+		Créer dossier new+i ("LSN_0"+i+"_"+nom);
+		Créer fichier fichier_md (nom) dans dossier new+i
+            Tant que (fichier n'est pas vide){
+                String ligne = Lire fichier i; 
+                écrire dans fichier_md (ligne);
+            }
+ 		Créer fichier JSON "lesson.json" dans dossier new+i
+ 		écrire dans JSON 
+ 		"{
+    "display": "LINEAR",
+    "ANY": {
+      "title": nom,
+      "description": ""
+    },
+    "ENU": {
+      "title": nom,
+      "description": ""
+    }
+  }"
+}
+
+//NEW
+fonction copie (nom dossier)
+Ouvrir dossier "documentation"
+Créer dossier ("CTG_50_docs")
+nbrAction = compte nombre d'élément a parcourir;
+Pour (i allant de 1 à nbrAction){
+    New element i;
+    Si(element i == dossier){
+        name = getNom dossier
+        Créez dossier ("CTG_0"+i"_"name")
+        copie (element i);
+    }
+    Autre si (element i == png){
+        copie coller image dans newFile;
+    }
+    autre si (element i == md){
+        Ouvrir fichier i;
+		nom = getNom(i);
+		Créer dossier new+i ("LSN_0"+i+"_"+nom);
+		Créer fichier fichier_md (nom) dans dossier new+i
+            Tant que (fichier n'est pas vide){
+                String ligne = Lire fichier i; 
+                écrire dans fichier_md (ligne);
+            }
+ 		Créer fichier JSON "lesson.json" dans dossier new+i
+ 		écrire dans JSON 
+ 		"{
+    "display": "LINEAR",
+    "ANY": {
+      "title": nom,
+      "description": ""
+    },
+    "ENU": {
+      "title": nom,
+      "description": ""
+    }
+  }"
+    }
+
+}
