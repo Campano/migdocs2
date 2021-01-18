@@ -83,12 +83,13 @@ Pour chaque fichier du dossier "répertoire origine"
             Lire le nom du fichier ".md" (du type basic-code-examples.md)
             Détecter le nom de la catégorie (Basic code example)
             Créez la leçon (type "LSN_01_basics-code-examples) avec son fichier "basic-code-examples.md" et son fichier json
+            Regarder dans le dossier s'il possède des fichiers ".png" en faisant une recherche par nom, si oui les déplacer vers sa "lesson correspondante"
     Si c'est un fichier ".md"
         Lire le nom du fichier ".md" (du type architecture.md)
         Détecter le nom de la catégorie (Architecture)
         Créez la leçon (type "LSN_01_architecture) avec son fichier "LSN_01_architecture.md" et son fichier json
         Regarder dans le dossier s'il possède des fichiers ".png" en faisant une recherche par nom, si oui les déplacer vers sa "lesson correspondante"
-         
+
     
 
 
