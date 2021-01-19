@@ -71,6 +71,9 @@ Pour (i allant de 1 à nbrAction){
 // V3
 Déclarer la variable "répertoire origine"
 Déclarer la variable "répertoire cible"
+Ouvrir "index.md" dans "répertoire origine"
+Récupérer l'ordre des leçons de chaque catégorie dans index.md
+Garder en mémoire cet ordre avec une liste "OrdreLeçon" et un "compteur de leçon" intialisé à la taille de cette dernière
 Créer la catégorie "CTG_50_docs" et son fichier json dans le répertoire cible
     Si il y a une problème lors de la création, renvoyez erreur
 Ouvrir le dossier "répertoire origine"
@@ -89,12 +92,18 @@ Pour chaque fichier du dossier "répertoire origine"
             Créez la leçon (type "LSN_01_basics-code-examples) avec son fichier "basic-code-examples.md" et son fichier json
                 Si il y a une problème lors de la création, renvoyez erreur
             Aller dans le fichier ".md" et regarder si il appelle un ou plusieurs fichier(s) png
-                Si oui, alors déplacer les fichiers png en question de la catégorie "mère" vers la "lesson" du fichier actuel
+                Si oui
+                    Créer une liste d'éléments à déplacer
+                    déplacer les fichiers png en question  1 par 1 de la catégorie "mère" vers la "lesson" du fichier actuel
                 Si le png est inexistant renvoyer erreur 
     Si c'est un fichier ".md"
         Lire le nom du fichier ".md" (du type architecture.md)
-        Détecter le nom de la catégorie (Architecture)
+        Détecter le nom de la leçon (Architecture)
             Si le nom n'est pas détectable, renvoyer erreur
+        Regarder dans la variable OrdreLeçon le numéro de leçon correspondant
+            Si non présent dans la liste
+                Regarder la variable "compteur de leçon" et lui donner la lesson n+1
+                incrémenter le compteur de leçon
         Créez la leçon (type "LSN_01_architecture) avec son fichier "LSN_01_architecture.md" et son fichier json
             Si il y a une problème lors de la création, renvoyez erreur
         Aller dans le fichier ".md" et regarder si il appelle un ou plusieurs fichier(s) png
@@ -105,6 +114,7 @@ Pour chaque fichier du dossier "répertoire origine"
         (il sera traité avec son fichier md)
     Si autre type de fichier
         Renvoyer une erreur
+Si il reste des fichiers png alors renvoyer erreur
 
     
 
