@@ -78,9 +78,9 @@ public class MigDocs2 {
         }
     }
 
-    public static void dealFolderContent (File origin, File target){
+    /*public static void dealFolderContent (File origin, File target){
         int cmp = 
-    }
+    }*/
 
     public static class MigDocs2Exception extends Exception {
         private String additional;
