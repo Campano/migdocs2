@@ -7,9 +7,9 @@ import java.nio.file.Paths;
 public class MigDocs2 {
     // private final static String DOCS_PATH =
     // "/Users/antoinecruveilher/dev/docs/documentation";
-    private final static String DOCS_PATH = "/Users/simoncampano/dev/simplicite.io/docs.simplicite.io/documentation";
+    private final static String DOCS_PATH = "/Users/antoinecruveilher/dev/docs/documentation";
     // private final static String DOCS2_PATH = "/path/to/destination";
-    private final static String DOCS2_PATH = "/Users/simoncampano/dev/INTERNAL_APPS/training-content/content";
+    private final static String DOCS2_PATH = "/Users/antoinecruveilher/Desktop";
     private final static Pattern MD_FILE_PATTERN = Pattern.compile(".*?([a-zA-Z0-9_-]+\\.md).*");
 
     public static void main(String[] args) {
@@ -38,7 +38,7 @@ public class MigDocs2 {
             throw new MigDocs2Exception("MIG_ERR_BASE_DIR_NOT_FOUND");
 
         // Si pas de fichier "index.md" dans le répertoire origine, Renvoyer erreur
-        File indexMd = new File(origin, "indx.md");
+        File indexMd = new File(origin, "index.md");
         if (!indexMd.exists())
             throw new MigDocs2Exception("MIG_ERR_INDEX_MD_NOT_FOUND", indexMd);
 
@@ -62,6 +62,23 @@ public class MigDocs2 {
 
         for (String lesson : lessonOrder)
             System.out.println(lesson);
+
+        //Créer la catégorie "CTG_50_docs" et son fichier json dans le répertoire cible
+        File theDir = new File(DOCS2_PATH+"/CTG_50_docs");
+        if (!theDir.exists()){
+            theDir.mkdirs();
+
+        //Fonction "Traiter contenu dossier" ("répertoire origine", "CTG_50_docs")
+
+
+        
+
+
+        }
+    }
+
+    public static void dealFolderContent (File origin, File target){
+        int cmp = 
     }
 
     public static class MigDocs2Exception extends Exception {
