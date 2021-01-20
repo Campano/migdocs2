@@ -1,110 +1,89 @@
 import java.util.*;
 import java.util.regex.*;
 import java.io.*;
-
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class MigDocs2 {
+    // private final static String DOCS_PATH =
+    // "/Users/antoinecruveilher/dev/docs/documentation";
+    private final static String DOCS_PATH = "/Users/simoncampano/dev/simplicite.io/docs.simplicite.io/documentation";
+    // private final static String DOCS2_PATH = "/path/to/destination";
+    private final static String DOCS2_PATH = "/Users/simoncampano/dev/INTERNAL_APPS/training-content/content";
+    private final static Pattern MD_FILE_PATTERN = Pattern.compile(".*?([a-zA-Z0-9_-]+\\.md).*");
+
     public static void main(String[] args) {
-        System.out.println("Hello, World");
+        System.out.println("Welcome to MigDocs2 tool");
+        try {
+            migrate();
+        } catch (MigDocs2Exception e) {
+            System.out.println(e.getMessage());
+        }
 
-        String docsPath = "/Users/antoinecruveilher/dev/docs/documentation"; //"/path/to/origin"; ///Users/antoinecruveilher/dev/docs/documentation
-        String docs2Path = "/path/to/destination"; //"/Users/simoncampano/dev/INTERNAL_APPS/training-content/content"
-        // TODO : algo de migration
+        /*
+         * try{ new CheckDocs2(docs2Path); } catch(Exception e){
+         * System.out.println(e.getMessage()); }
+         */
+    }
 
-        
-        //Déclarer la variable "répertoire origine"
-        File repertoireOrigine = new File (docsPath);
-        //Déclarer la variable "répertoire cible"
-        File repertoireCible = new File (docs2Path);
-        //Déclarer la variable "fichiers traîtés"
+    private static void migrate() throws MigDocs2Exception {
+        // Déclarer la variable "répertoire origine"
+        File origin = new File(DOCS_PATH);
+        // Déclarer la variable "répertoire cible"
+        File target = new File(DOCS2_PATH);
+        // Déclarer la variable "fichiers traîtés"
         ArrayList<File> fichierTraités = new ArrayList<>();
 
-         // Si pas de fichier "index.md" dans le répertoire origine
-        //   Renvoyer erreur
-            boolean indexExiste = false;
-            String liste[] = repertoireOrigine.list();      
-    
-            if (liste != null) {         
-                for (int i = 0; i < liste.length; i++) {               
-                    if(liste[i].equals("index.md")){
-                        indexExiste = true;
-                    }
-                    System.out.println(liste[i]);
-                }
-            } else {
-                System.err.println("Nom de repertoire invalide");
-            }
-            if(!indexExiste){
-                System.err.println("Le fichier index.md n'existe pas");
-            }
-            /*
-        try {
-            //Déclarer la variable "répertoire origine"
-            File repertoireOrigine = new File(docsPath);
-            //Déclarer la variable "répertoire cible"
-            File repertoireCible = new File(docs2Path);
-            boolean indexExiste = false;
-            String liste[] = repertoireOrigine.list();
+        if (!origin.exists() || !target.exists())
+            throw new MigDocs2Exception("MIG_ERR_BASE_DIR_NOT_FOUND");
 
-            if (liste != null) {
-                for (int i = 0; i < liste.length; i++) {
-                    if (liste[i].equals("index.md")) {
-                        indexExiste = true;
-                    }
-                    System.out.println(liste[i]);
+        // Si pas de fichier "index.md" dans le répertoire origine, Renvoyer erreur
+        File indexMd = new File(origin, "indx.md");
+        if (!indexMd.exists())
+            throw new MigDocs2Exception("MIG_ERR_INDEX_MD_NOT_FOUND", indexMd);
+
+        // Déclarer la liste "ordre des leçons"
+        ArrayList<String> lessonOrder = new ArrayList<>();
+        try {
+            // Pour chaque ligne du fichier "index.md"
+            for (String line : Files.readAllLines(Paths.get(indexMd.getPath()))) {
+                // Si on détecte un nom de fichier md (via une regex "alphanumériques, tirets,
+                // underscores + '.md'")
+                Matcher m = MD_FILE_PATTERN.matcher(line);
+                if (m.matches()) {
+                    // Ajouter le nom de fichier md à "ordre des leçons"
+                    lessonOrder.add(m.group(1));
                 }
-            }
-            if (!indexExiste) {
-                System.err.println("Le fichier index.md n'existe pas");
             }
         } catch (Exception e) {
-            System.out.println("Nom de repertoire invalide");
-        }*/
-
-        /*Déclarer la liste "ordre des leçons"
-        Pour chaque ligne du fichier "index.md"
-            Si on détecte un nom de fichier md (via une regex "alphanumériques, tirets, underscores + '.md'")
-            Ajouter le nom de fichier md à "ordre des leçons"*/
-
-        
-                ArrayList<String> ordreDesLeçons = new ArrayList <>();
-
-
-                
-                try
-                {
-                    // Le fichier d'entrée
-                    File file = new File(docsPath+"/index.md");    
-                    // Créer l'objet File Reader
-                    FileReader fr = new FileReader(file);  
-                    // Créer l'objet BufferedReader        
-                    BufferedReader br = new BufferedReader(fr);  
-
-                    Pattern p = Pattern.compile("\\w*\\-*\\w*\\-\\w*\\.md");
-                        
-                    String line;
-                    
-                    while((line = br.readLine()) != null)
-                    {                        
-                        Matcher m = p.matcher(line);
-                        ordreDesLeçons.add(m.group());
-                        
-                    }
-
-                    fr.close();    
-                        
-                    }
-                        catch(IOException e)
-                    {
-                        e.printStackTrace();
-                    }
-
-
-        /*try{
-            new CheckDocs2(docs2Path);
+            e.printStackTrace();
+            throw new MigDocs2Exception("MIG_ERR_READING_INDEX");
         }
-        catch(Exception e){
-            System.out.println(e.getMessage());
-        } */
+
+        for (String lesson : lessonOrder)
+            System.out.println(lesson);
+    }
+
+    public static class MigDocs2Exception extends Exception {
+        private String additional;
+
+        public MigDocs2Exception(String msg) {
+            super(msg);
+            additional = "";
+        }
+
+        public MigDocs2Exception(String msg, String additional) {
+            super(msg);
+            this.additional = additional;
+        }
+
+        public MigDocs2Exception(String msg, File f) {
+            super(msg);
+            this.additional = f.getPath();
+        }
+
+        public String getMessage() {
+            return super.getMessage() + " : " + additional;
+        }
     }
 }
