@@ -3,6 +3,7 @@ import java.util.regex.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.charset.Charset;
 
 public class MigDocs2 {
     // private final static String DOCS_PATH =
@@ -46,7 +47,7 @@ public class MigDocs2 {
         ArrayList<String> lessonOrder = new ArrayList<>();
         try {
             // Pour chaque ligne du fichier "index.md"
-            for (String line : Files.readAllLines(Paths.get(indexMd.getPath()))) {
+            for (String line : Files.readAllLines(Paths.get(indexMd.getPath()), Charset.forName("UTF-8"))) {
                 // Si on détecte un nom de fichier md (via une regex "alphanumériques, tirets,
                 // underscores + '.md'")
                 Matcher m = MD_FILE_PATTERN.matcher(line);
