@@ -79,6 +79,17 @@ public class MigDocs2 {
         }
     }
 
+    public static String getExtension(File file)
+	{
+        String extension = "";
+
+        int i = file.getName().lastIndexOf('.');
+        if (i > 0) {
+            extension = file.getName().substring(i+1);
+        }
+        return extension;
+	}
+
     public static void dealFolderContent(File origin, File target) {
         //utile pour le nom de la lesson
         String tmp = "";
@@ -98,13 +109,13 @@ public class MigDocs2 {
         //Pour chaque fichier de ce dossier
         File[] files = origin.listFiles();
 
-        for (int i = 0; i <= files.length; ++i) {
+        for (File currentFile: files) {
             //Si c'est un dossier
-            if (!files[i].getName().contains(".")) {
+            if (getExtension(currentFile)=="") {
                 //+10 au compteur ordre 
                 order += 10;
                 Pattern p = Pattern.compile("[a-z]");
-                Matcher m = p.matcher(files[i].getName());
+                Matcher m = p.matcher(currentFile.getName());
                 //Lire le nom du dossier (du type "01-core")
                 //Détecter le nom de la catégorie ("core" via une regex: deux chiffres + un tiret + alphanum)
                 //Si ne correspond pas, renvoyer erreur
@@ -118,7 +129,7 @@ public class MigDocs2 {
                 }
                 File nJSON = new File(DOCS2_PATH + "/CTG_50_docs/CTG_" + order + "_" + tmp + "/category.json");
                 //écriture dans le json pas encore faite
-                dealFolderContent(files[i], newCategory);
+                dealFolderContent(currentFile, newCategory);
             }
 
         }
