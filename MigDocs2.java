@@ -35,7 +35,7 @@ public class MigDocs2 {
         // Déclarer la variable "répertoire cible"
         File target = new File(DOCS2_PATH);
         // Déclarer la variable "fichiers traîtés"
-        ArrayList < File > fichierTraités = new ArrayList < > ();
+        ArrayList < String > fichierTraités = new ArrayList < > ();
 
         if (!origin.exists() || !target.exists())
             throw new MigDocs2Exception("MIG_ERR_BASE_DIR_NOT_FOUND");
@@ -131,9 +131,50 @@ public class MigDocs2 {
                 //écriture dans le json pas encore faite
                 dealFolderContent(currentFile, newCategory);
             }
+            //Si c'est un fichier ".md", et qu'il n'existe pas dans "leçons de ce dossier"
+            else if(getExtension(currentFile)=="md" && !LessonsOfThisFile.contains(currentFile.getName())){
+                //ajouter à la liste "leçons de ce dossier"
+                LessonsOfThisFile.add(currentFile);
+            }
+        }
+        for (File currentFile : LessonsOfThisFile){
+            order=+10;
+            //Ajouter le nom à la liste des fichiers traîtés
+            fichierTraités.add(currentFile.getName());
+            //Lire le nom du fichier ".md" (du type basic-code-examples.md)
+            //Détecter le nom de la leçon (Basic code example -> Remplacer les tirets par des espaces et mettre la première lettre en majuscule)
+            String TitleOfLesson = currentFile.getName();
+            TitleOfLesson = TitleOfLesson.replace('-',' ');
+            TitleOfLesson = TitleOfLesson.substring(0,TitleOfLesson.length()-3);
+            TitleOfLesson = TitleOfLesson.substring(0, 1).toUpperCase() + TitleOfLesson.substring(1);
+            
+            //Créez la leçon (type "LSN_01_basics-code-examples) avec l'ordre, son fichier "basic-code-examples.md" et son fichier json
+            //Je beug sur le  nom de chemin içi
+            File nLesson = new File(DOCS2_PATH + "/CTG_50_docs/"+target);
+            if (!nLesson.exists()) {
+                nLesson.mkdirs();
+            }
+
+            /*Pour chaque ligne du fichier md
+            Si on détecte un nom de fichier png
+            Si le fichier existe dans le dossier présent
+            Copier le fichier dans la leçon
+            Ajouter le nom à la liste des fichiers traîtés*/
+        
+            // Pour chaque ligne du fichier md
+            /*ArrayList <String> listePngImport = new ArrayList <>();
+            for (String line: Files.readAllLines(Paths.get(currentFile.getPath()), Charset.forName("UTF-8"))) {
+                
+                Pattern p = Pattern.compile(".*?([a-zA-Z0-9_-]+\\.png).*");
+                Matcher m = p.matcher(line);
+                if (m.matches()) {
+                    // Ajouter le nom de fichier md à "ordre des leçons"
+                    listePngImport.add(m.group(1));
+                }
+                if (currentFile.exists)
+            }*/
 
         }
-
     }
 
     public static class MigDocs2Exception extends Exception {

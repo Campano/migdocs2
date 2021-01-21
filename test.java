@@ -21,8 +21,11 @@ public class test {
 	}
 
     public static void main(String[] args) {
-        File test = new File ("/Users/antoinecruveilher/dev/docs/documentation/architecture-fullprofilemode.png");
-        System.out.println(getExtension(test));
+        String toto = "basic-code-example.md";
+        toto = toto.replace('-',' ');
+        toto = toto.substring(0,toto.length()-3);
+        toto = toto.substring(0, 1).toUpperCase() + toto.substring(1);
+        System.out.println(toto);
     }
 
 }
