@@ -14,6 +14,9 @@ public class MigDocs2 {
     private final static Pattern MD_FILE_PATTERN = Pattern.compile(".*?([a-zA-Z0-9_-]+\\.md).*");
     // Déclarer la liste "ordre des leçons"
     public static ArrayList < String > lessonOrder = new ArrayList < > ();
+    // Déclarer la variable "fichiers traîtés"
+    public static ArrayList < String > fichierTraités = new ArrayList < > ();
+
 
     public static void main(String[] args) {
         System.out.println("Welcome to MigDocs2 tool");
@@ -79,16 +82,15 @@ public class MigDocs2 {
         }
     }
 
-    public static String getExtension(File file)
-	{
+    public static String getExtension(File file) {
         String extension = "";
 
         int i = file.getName().lastIndexOf('.');
         if (i > 0) {
-            extension = file.getName().substring(i+1);
+            extension = file.getName().substring(i + 1);
         }
         return extension;
-	}
+    }
 
     public static void dealFolderContent(File origin, File target) {
         //utile pour le nom de la lesson
@@ -97,13 +99,13 @@ public class MigDocs2 {
         Integer order = 0;
 
         //Déclarer la liste ordonnée "leçons de ce dossier"
-        ArrayList < String > LessonsOfThisFile = new ArrayList < > ();
+        ArrayList < File > LessonsOfThisFile = new ArrayList < > ();
         //Pour chaque item de la liste "ordre des leçons"
         for (String lesson: lessonOrder) {
             //Si la leçon existe dans ce dossier, ajouter à la liste "leçons de ce dossier"
             File currentLesson = new File(origin, lesson);
             if (currentLesson.exists()) {
-                LessonsOfThisFile.add(lesson);
+                LessonsOfThisFile.add(currentLesson);
             }
         }
         //Pour chaque fichier de ce dossier
@@ -111,7 +113,7 @@ public class MigDocs2 {
 
         for (File currentFile: files) {
             //Si c'est un dossier
-            if (getExtension(currentFile)=="") {
+            if (getExtension(currentFile) == "") {
                 //+10 au compteur ordre 
                 order += 10;
                 Pattern p = Pattern.compile("[a-z]");
@@ -132,25 +134,25 @@ public class MigDocs2 {
                 dealFolderContent(currentFile, newCategory);
             }
             //Si c'est un fichier ".md", et qu'il n'existe pas dans "leçons de ce dossier"
-            else if(getExtension(currentFile)=="md" && !LessonsOfThisFile.contains(currentFile.getName())){
+            else if (getExtension(currentFile) == "md" && !LessonsOfThisFile.contains(currentFile.getName())) {
                 //ajouter à la liste "leçons de ce dossier"
                 LessonsOfThisFile.add(currentFile);
             }
         }
-        for (File currentFile : LessonsOfThisFile){
-            order=+10;
+        for (File currentFile: LessonsOfThisFile) {
+            order = +10;
             //Ajouter le nom à la liste des fichiers traîtés
             fichierTraités.add(currentFile.getName());
             //Lire le nom du fichier ".md" (du type basic-code-examples.md)
             //Détecter le nom de la leçon (Basic code example -> Remplacer les tirets par des espaces et mettre la première lettre en majuscule)
             String TitleOfLesson = currentFile.getName();
-            TitleOfLesson = TitleOfLesson.replace('-',' ');
-            TitleOfLesson = TitleOfLesson.substring(0,TitleOfLesson.length()-3);
+            TitleOfLesson = TitleOfLesson.replace('-', ' ');
+            TitleOfLesson = TitleOfLesson.substring(0, TitleOfLesson.length() - 3);
             TitleOfLesson = TitleOfLesson.substring(0, 1).toUpperCase() + TitleOfLesson.substring(1);
-            
+
             //Créez la leçon (type "LSN_01_basics-code-examples) avec l'ordre, son fichier "basic-code-examples.md" et son fichier json
             //Je beug sur le  nom de chemin içi
-            File nLesson = new File(DOCS2_PATH + "/CTG_50_docs/"+target);
+            File nLesson = new File(DOCS2_PATH + "/CTG_50_docs/" + target);
             if (!nLesson.exists()) {
                 nLesson.mkdirs();
             }
@@ -160,20 +162,53 @@ public class MigDocs2 {
             Si le fichier existe dans le dossier présent
             Copier le fichier dans la leçon
             Ajouter le nom à la liste des fichiers traîtés*/
-        
-            // Pour chaque ligne du fichier md
-            /*ArrayList <String> listePngImport = new ArrayList <>();
-            for (String line: Files.readAllLines(Paths.get(currentFile.getPath()), Charset.forName("UTF-8"))) {
-                
-                Pattern p = Pattern.compile(".*?([a-zA-Z0-9_-]+\\.png).*");
-                Matcher m = p.matcher(line);
-                if (m.matches()) {
-                    // Ajouter le nom de fichier md à "ordre des leçons"
-                    listePngImport.add(m.group(1));
-                }
-                if (currentFile.exists)
-            }*/
 
+            // Pour chaque ligne du fichier md
+            try {
+                
+                for (String line: Files.readAllLines(Paths.get(currentFile.getPath()), Charset.forName("UTF-8"))) {
+
+                    String PNGimport = "";
+                    Pattern p = Pattern.compile(".*?([a-zA-Z0-9_-]+\\.png).*");
+                    Matcher m = p.matcher(line);
+                    if (m.matches()) {
+                        // Ajouter le nom de fichier md à "ordre des leçons"
+                        PNGimport = m.group(1);
+                    }
+                    if(!PNGimport.equals("")){
+                        //Problème de chemin
+                        File FilePNGImport = new File ();
+                        if (FilePNGImport.exists()){
+                            //Problème de chemin
+                            copyFileUsingStream();
+                        }
+                    }
+                    //Ajoutez le nom aux fichiers traités
+                    fichierTraités.add(PNGimport);
+                    
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new MigDocs2Exception("MIG_ERR_READING_INDEX");
+            }
+
+        }
+    }
+    //https://www.journaldev.com/861/java-copy-file
+    private static void copyFileUsingStream(File source, File dest) throws IOException {
+        InputStream is = null;
+        OutputStream os = null;
+        try {
+            is = new FileInputStream(source);
+            os = new FileOutputStream(dest);
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = is.read(buffer)) > 0) {
+                os.write(buffer, 0, length);
+            }
+        } finally {
+            is.close();
+            os.close();
         }
     }
 
