@@ -116,18 +116,19 @@ public class MigDocs2 {
 
         for (File currentFile: files) {
             //Si c'est un dossier
-            if (getExtension(currentFile) == "") {
+            if (currentFile.isDirectory()) {
                 //+10 au compteur ordre 
                 order += 10;
-                Pattern p = Pattern.compile("[a-z-]+");
+                Pattern p = Pattern.compile("[a-z]+");
                 Matcher m = p.matcher(currentFile.getName());
+                System.out.println(currentFile.getName());
                 //Lire le nom du dossier (du type "01-core")
                 //Détecter le nom de la catégorie ("core" via une regex: deux chiffres + un tiret + alphanum)
                 //Si ne correspond pas, renvoyer erreur
                 
                 if (m.matches()) {
                     
-                    tmp = m.group(1);
+                    tmp = ""+m.group(1);
                     System.out.println(tmp);
                 }
                 System.out.println(order + " + " + tmp);
