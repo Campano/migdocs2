@@ -6,11 +6,11 @@ import java.nio.file.Paths;
 import java.nio.charset.Charset;
 
 public class MigDocs2 {
-    // private final static String DOCS_PATH =
-    // "/Users/antoinecruveilher/dev/docs/documentation";
     private final static String DOCS_PATH = "/Users/antoinecruveilher/dev/docs/documentation";
-    // private final static String DOCS2_PATH = "/path/to/destination";
     private final static String DOCS2_PATH = "/Users/antoinecruveilher/Desktop";
+    // private final static String DOCS_PATH = "/Users/simoncampano/dev/simplicite.io/docs.simplicite.io/documentation";
+    // private final static String DOCS2_PATH = "/Users/simoncampano/dev/tmp";
+    
     private final static Pattern MD_FILE_PATTERN = Pattern.compile(".*?([a-zA-Z0-9_-]+\\.md).*");
     // Déclarer la liste "ordre des leçons"
     public static ArrayList < String > lessonOrder = new ArrayList < > ();
