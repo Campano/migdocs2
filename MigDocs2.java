@@ -69,17 +69,18 @@ public class MigDocs2 {
             System.out.println(lesson);
 
         //Créer la catégorie "CTG_50_docs" et son fichier json dans le répertoire cible
-        File theDir = new File(DOCS2_PATH + "/CTG_50_docs");
+        File theDir = new File(DOCS2_PATH + "/CTG_50_docs/");
         if (!theDir.exists()) {
             theDir.mkdirs();
 
             //Fonction "Traiter contenu dossier" ("répertoire origine", "CTG_50_docs")
-
+            
 
 
 
 
         }
+        dealFolderContent(origin, theDir);
     }
 
     public static String getExtension(File file) {
@@ -92,11 +93,13 @@ public class MigDocs2 {
         return extension;
     }
 
-    public static void dealFolderContent(File origin, File target) {
+    public static void dealFolderContent(File origin, File target) throws MigDocs2Exception {
         //utile pour le nom de la lesson
-        String tmp = "";
+        String tmp = "rien";
         //Initialiser compteur ordre à 0
         Integer order = 0;
+
+        String newPath = DOCS2_PATH+"/CTG_50_docs";
 
         //Déclarer la liste ordonnée "leçons de ce dossier"
         ArrayList < File > LessonsOfThisFile = new ArrayList < > ();
@@ -116,20 +119,25 @@ public class MigDocs2 {
             if (getExtension(currentFile) == "") {
                 //+10 au compteur ordre 
                 order += 10;
-                Pattern p = Pattern.compile("[a-z]");
+                Pattern p = Pattern.compile("[a-z-]+");
                 Matcher m = p.matcher(currentFile.getName());
                 //Lire le nom du dossier (du type "01-core")
                 //Détecter le nom de la catégorie ("core" via une regex: deux chiffres + un tiret + alphanum)
                 //Si ne correspond pas, renvoyer erreur
+                
                 if (m.matches()) {
+                    
                     tmp = m.group(1);
+                    System.out.println(tmp);
                 }
+                System.out.println(order + " + " + tmp);
+                newPath = newPath+ "/CTG_" + order + "_" + tmp;
                 //Créer le dossier catégorie (type "CTG_10_core") avec l'ordre et son fichier json dans "CTG_50_docs"
-                File newCategory = new File(DOCS2_PATH + "/CTG_50_docs/CTG_" + order + "_" + tmp);
+                File newCategory = new File(newPath);
                 if (!newCategory.exists()) {
                     newCategory.mkdirs();
                 }
-                File nJSON = new File(DOCS2_PATH + "/CTG_50_docs/CTG_" + order + "_" + tmp + "/category.json");
+                File nJSON = new File(newPath + "/category.json");
                 //écriture dans le json pas encore faite
                 dealFolderContent(currentFile, newCategory);
             }
@@ -140,7 +148,7 @@ public class MigDocs2 {
             }
         }
         for (File currentFile: LessonsOfThisFile) {
-            order = +10;
+            order += 10;
             //Ajouter le nom à la liste des fichiers traîtés
             fichierTraités.add(currentFile.getName());
             //Lire le nom du fichier ".md" (du type basic-code-examples.md)
@@ -152,7 +160,8 @@ public class MigDocs2 {
 
             //Créez la leçon (type "LSN_01_basics-code-examples) avec l'ordre, son fichier "basic-code-examples.md" et son fichier json
             //Je beug sur le  nom de chemin içi
-            File nLesson = new File(DOCS2_PATH + "/CTG_50_docs/" + target);
+            
+            File nLesson = new File(newPath+"/LSN_"+order+"_"+currentFile.getName().substring(0, currentFile.getName().length() - 3));
             if (!nLesson.exists()) {
                 nLesson.mkdirs();
             }
@@ -177,10 +186,10 @@ public class MigDocs2 {
                     }
                     if(!PNGimport.equals("")){
                         //Problème de chemin
-                        File FilePNGImport = new File ();
+                        File FilePNGImport = new File (DOCS_PATH+"/"+PNGimport);
                         if (FilePNGImport.exists()){
                             //Problème de chemin
-                            copyFileUsingStream();
+                            copyFile(origin,nLesson);
                         }
                     }
                     //Ajoutez le nom aux fichiers traités
@@ -194,23 +203,11 @@ public class MigDocs2 {
 
         }
     }
-    //https://www.journaldev.com/861/java-copy-file
-    private static void copyFileUsingStream(File source, File dest) throws IOException {
-        InputStream is = null;
-        OutputStream os = null;
-        try {
-            is = new FileInputStream(source);
-            os = new FileOutputStream(dest);
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = is.read(buffer)) > 0) {
-                os.write(buffer, 0, length);
-            }
-        } finally {
-            is.close();
-            os.close();
-        }
+    
+    public static void copyFile( File from, File to ) throws IOException {
+        Files.copy( from.toPath(), to.toPath() );
     }
+    
 
     public static class MigDocs2Exception extends Exception {
         private String additional;
