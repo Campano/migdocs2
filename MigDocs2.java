@@ -65,8 +65,8 @@ public class MigDocs2 {
             throw new MigDocs2Exception("MIG_ERR_READING_INDEX");
         }
 
-        for (String lesson: lessonOrder)
-            System.out.println(lesson);
+        /*for (String lesson: lessonOrder)
+            System.out.println(lesson);*/
 
         //Créer la catégorie "CTG_50_docs" et son fichier json dans le répertoire cible
         File theDir = new File(DOCS2_PATH + "/CTG_50_docs/");
@@ -125,6 +125,7 @@ public class MigDocs2 {
                 //Détecter le nom de la catégorie ("core" via une regex: deux chiffres + un tiret + alphanum)
                 //Si ne correspond pas, renvoyer erreur
                 
+                
                 if (m.find()) {
                     
                     tmp = m.group(0);
@@ -132,7 +133,8 @@ public class MigDocs2 {
                 }
                 tmp=tmp.substring(1,tmp.length());
                 //System.out.println(order + " + " + tmp);
-                newPath = newPath+ "/CTG_" + order + "_" + tmp;
+                
+                //newPath = newPath+ "/CTG_" + order + "_" + tmp;
                 //Créer le dossier catégorie (type "CTG_10_core") avec l'ordre et son fichier json dans "CTG_50_docs"
                 File newCategory = new File(newPath);
                 if (!newCategory.exists()) {
@@ -140,7 +142,7 @@ public class MigDocs2 {
                 }
                 File nJSON = new File(newPath + "/category.json");
                 //écriture dans le json pas encore faite
-                dealFolderContent(currentFile, newCategory,newPath);
+                dealFolderContent(currentFile, newCategory,newPath+ "/CTG_" + order + "_" + tmp);
             }
             //Si c'est un fichier ".md", et qu'il n'existe pas dans "leçons de ce dossier"
             else if (getExtension(currentFile) == "md" && !LessonsOfThisFile.contains(currentFile.getName())) {
@@ -148,6 +150,7 @@ public class MigDocs2 {
                 LessonsOfThisFile.add(currentFile);
             }
         }
+        
         for (File currentFile: LessonsOfThisFile) {
             order += 10;
             //Ajouter le nom à la liste des fichiers traîtés
@@ -167,6 +170,13 @@ public class MigDocs2 {
                 nLesson.mkdirs();
             }
 
+            try{
+                copyFile(currentFile,nLesson);
+            }
+            catch(Exception e) {
+                e.printStackTrace();
+                throw new MigDocs2Exception("MIG_ERR_COPY_MD");
+            }
             /*Pour chaque ligne du fichier md
             Si on détecte un nom de fichier png
             Si le fichier existe dans le dossier présent
@@ -199,7 +209,7 @@ public class MigDocs2 {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                throw new MigDocs2Exception("MIG_ERR_READING_INDEX");
+                throw new MigDocs2Exception("MIG_ERR_PNG");
             }
 
         }
