@@ -37,6 +37,7 @@ public class MigDocs2 {
         File origin = new File(DOCS_PATH);
         // Déclarer la variable "répertoire cible"
         File target = new File(DOCS2_PATH);
+        
         // Déclarer la variable "fichiers traîtés"
         ArrayList < String > fichierTraites = new ArrayList < > ();
 
@@ -142,9 +143,9 @@ public class MigDocs2 {
                 }
                 
                 //écriture dans le json pas encore faite
-                String titleOfCategory = currentFile.getName();
-                titleOfCategory = titleOfCategory.replace('-', ' ');
-                titleOfCategory = titleOfCategory.substring(0, titleOfCategory.length() - 3);
+                String titleOfCategory = tmp;
+                
+                
                 titleOfCategory = titleOfCategory.substring(0, 1).toUpperCase() + titleOfCategory.substring(1);
 
                 writeJSON(newCategory,titleOfCategory);
@@ -192,7 +193,7 @@ public class MigDocs2 {
             Ajouter le nom à la liste des fichiers traîtés*/
 
             // Pour chaque ligne du fichier md
-            try {
+            /*try {
                 
                 for (String line: Files.readAllLines(Paths.get(currentFile.getPath()), Charset.forName("UTF-8"))) {
 
@@ -218,7 +219,7 @@ public class MigDocs2 {
             } catch (Exception e) {
                 e.printStackTrace();
                 throw new MigDocs2Exception("MIG_ERR_PNG");
-            }
+            }*/
 
         }
     }
@@ -229,8 +230,10 @@ public class MigDocs2 {
 
     public static void writeJSON (File toJSON,String title) throws MigDocs2Exception {
         
-        if (toJSON.getName().substring(0,2)=="LSN"){
+        System.out.println(toJSON.getName().substring(0,3));
+        if (toJSON.getName().substring(0,3).equals("LSN")){
             try{
+                System.out.println("lecon");
                 File newFileJSON = new File (toJSON.toPath()+"/lesson.json");
                 PrintWriter newJSON = new PrintWriter(newFileJSON, "UTF-8");
                 newJSON.println("{");
@@ -251,8 +254,9 @@ public class MigDocs2 {
             }
 
         }
-        else if (toJSON.getName().substring(0,2)=="CTG"){
+        else if (toJSON.getName().substring(0,3).equals("CTG")){
             try{
+                System.out.println("category");
                 File newFileJSON = new File (toJSON.toPath()+"/category.json");
                 PrintWriter newJSON = new PrintWriter(newFileJSON, "UTF-8");
                 newJSON.println("{");
