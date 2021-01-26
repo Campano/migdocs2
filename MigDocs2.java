@@ -15,7 +15,7 @@ public class MigDocs2 {
     // Déclarer la liste "ordre des leçons"
     public static ArrayList < String > lessonOrder = new ArrayList < > ();
     // Déclarer la variable "fichiers traîtés"
-    public static ArrayList < String > fichierTraités = new ArrayList < > ();
+    public static ArrayList < String > fichierTraites = new ArrayList < > ();
 
 
     public static void main(String[] args) {
@@ -38,7 +38,7 @@ public class MigDocs2 {
         // Déclarer la variable "répertoire cible"
         File target = new File(DOCS2_PATH);
         // Déclarer la variable "fichiers traîtés"
-        ArrayList < String > fichierTraités = new ArrayList < > ();
+        ArrayList < String > fichierTraites = new ArrayList < > ();
 
         if (!origin.exists() || !target.exists())
             throw new MigDocs2Exception("MIG_ERR_BASE_DIR_NOT_FOUND");
@@ -75,12 +75,11 @@ public class MigDocs2 {
 
             //Fonction "Traiter contenu dossier" ("répertoire origine", "CTG_50_docs")
             
-
-
-
-
         }
-        dealFolderContent(origin, theDir);
+
+        String newPath = DOCS2_PATH+"/CTG_50_docs";
+
+        dealFolderContent(origin, theDir,newPath);
     }
 
     public static String getExtension(File file) {
@@ -93,13 +92,13 @@ public class MigDocs2 {
         return extension;
     }
 
-    public static void dealFolderContent(File origin, File target) throws MigDocs2Exception {
+    public static void dealFolderContent(File origin, File target,String newPath) throws MigDocs2Exception {
         //utile pour le nom de la lesson
         String tmp = "rien";
         //Initialiser compteur ordre à 0
         Integer order = 0;
 
-        String newPath = DOCS2_PATH+"/CTG_50_docs";
+        
 
         //Déclarer la liste ordonnée "leçons de ce dossier"
         ArrayList < File > LessonsOfThisFile = new ArrayList < > ();
@@ -119,19 +118,20 @@ public class MigDocs2 {
             if (currentFile.isDirectory()) {
                 //+10 au compteur ordre 
                 order += 10;
-                Pattern p = Pattern.compile("[a-z]+");
+                Pattern p = Pattern.compile("[a-z-]+");
                 Matcher m = p.matcher(currentFile.getName());
-                System.out.println(currentFile.getName());
+                //System.out.println(currentFile.getName());
                 //Lire le nom du dossier (du type "01-core")
                 //Détecter le nom de la catégorie ("core" via une regex: deux chiffres + un tiret + alphanum)
                 //Si ne correspond pas, renvoyer erreur
                 
-                if (m.matches()) {
+                if (m.find()) {
                     
-                    tmp = ""+m.group(1);
-                    System.out.println(tmp);
+                    tmp = m.group(0);
+
                 }
-                System.out.println(order + " + " + tmp);
+                tmp=tmp.substring(1,tmp.length());
+                //System.out.println(order + " + " + tmp);
                 newPath = newPath+ "/CTG_" + order + "_" + tmp;
                 //Créer le dossier catégorie (type "CTG_10_core") avec l'ordre et son fichier json dans "CTG_50_docs"
                 File newCategory = new File(newPath);
@@ -140,7 +140,7 @@ public class MigDocs2 {
                 }
                 File nJSON = new File(newPath + "/category.json");
                 //écriture dans le json pas encore faite
-                dealFolderContent(currentFile, newCategory);
+                dealFolderContent(currentFile, newCategory,newPath);
             }
             //Si c'est un fichier ".md", et qu'il n'existe pas dans "leçons de ce dossier"
             else if (getExtension(currentFile) == "md" && !LessonsOfThisFile.contains(currentFile.getName())) {
@@ -151,13 +151,13 @@ public class MigDocs2 {
         for (File currentFile: LessonsOfThisFile) {
             order += 10;
             //Ajouter le nom à la liste des fichiers traîtés
-            fichierTraités.add(currentFile.getName());
+            fichierTraites.add(currentFile.getName());
             //Lire le nom du fichier ".md" (du type basic-code-examples.md)
             //Détecter le nom de la leçon (Basic code example -> Remplacer les tirets par des espaces et mettre la première lettre en majuscule)
-            String TitleOfLesson = currentFile.getName();
-            TitleOfLesson = TitleOfLesson.replace('-', ' ');
-            TitleOfLesson = TitleOfLesson.substring(0, TitleOfLesson.length() - 3);
-            TitleOfLesson = TitleOfLesson.substring(0, 1).toUpperCase() + TitleOfLesson.substring(1);
+            String titleOfLesson = currentFile.getName();
+            titleOfLesson = titleOfLesson.replace('-', ' ');
+            titleOfLesson = titleOfLesson.substring(0, titleOfLesson.length() - 3);
+            titleOfLesson = titleOfLesson.substring(0, 1).toUpperCase() + titleOfLesson.substring(1);
 
             //Créez la leçon (type "LSN_01_basics-code-examples) avec l'ordre, son fichier "basic-code-examples.md" et son fichier json
             //Je beug sur le  nom de chemin içi
@@ -194,7 +194,7 @@ public class MigDocs2 {
                         }
                     }
                     //Ajoutez le nom aux fichiers traités
-                    fichierTraités.add(PNGimport);
+                    fichierTraites.add(PNGimport);
                     
                 }
             } catch (Exception e) {
