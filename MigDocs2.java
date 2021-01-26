@@ -78,9 +78,9 @@ public class MigDocs2 {
             
         }
 
-        String newPath = DOCS2_PATH+"/CTG_50_docs";
+        //String newPath = DOCS2_PATH+"/CTG_50_docs";
 
-        dealFolderContent(origin, theDir,newPath);
+        dealFolderContent(origin, theDir);
     }
 
     public static String getExtension(File file) {
@@ -93,14 +93,14 @@ public class MigDocs2 {
         return extension;
     }
 
-    public static void dealFolderContent(File origin, File target,String newPath) throws MigDocs2Exception {
+    public static void dealFolderContent(File origin, File target) throws MigDocs2Exception {
         //utile pour le nom de la lesson
         String tmp = "rien";
         //Initialiser compteur ordre à 0
         Integer order = 0;
 
         
-
+        
         //Déclarer la liste ordonnée "leçons de ce dossier"
         ArrayList < File > LessonsOfThisFile = new ArrayList < > ();
         //Pour chaque item de la liste "ordre des leçons"
@@ -137,7 +137,7 @@ public class MigDocs2 {
                 
                 //newPath = newPath+ "/CTG_" + order + "_" + tmp;
                 //Créer le dossier catégorie (type "CTG_10_core") avec l'ordre et son fichier json dans "CTG_50_docs"
-                File newCategory = new File(newPath);
+                File newCategory = new File(target.toString());
                 if (!newCategory.exists()) {
                     newCategory.mkdirs();
                 }
@@ -145,12 +145,14 @@ public class MigDocs2 {
                 //écriture dans le json pas encore faite
                 String titleOfCategory = tmp;
                 
-                
+                File nextCategory = new File (target.toPath()+ "/CTG_" + order + "_" + tmp);
+                //newPath+ "/CTG_" + order + "_" + tmp
                 titleOfCategory = titleOfCategory.substring(0, 1).toUpperCase() + titleOfCategory.substring(1);
 
                 writeJSON(newCategory,titleOfCategory);
 
-                dealFolderContent(currentFile, newCategory,newPath+ "/CTG_" + order + "_" + tmp);
+                dealFolderContent(currentFile, nextCategory);
+                
             }
             //Si c'est un fichier ".md", et qu'il n'existe pas dans "leçons de ce dossier"
             else if (getExtension(currentFile) == "md" && !LessonsOfThisFile.contains(currentFile.getName())) {
@@ -173,7 +175,7 @@ public class MigDocs2 {
             //Créez la leçon (type "LSN_01_basics-code-examples) avec l'ordre, son fichier "basic-code-examples.md" et son fichier json
             //Je beug sur le  nom de chemin içi
             
-            File nLesson = new File(newPath+"/LSN_"+order+"_"+currentFile.getName().substring(0, currentFile.getName().length() - 3));
+            File nLesson = new File(target.toPath()+"/LSN_"+order+"_"+currentFile.getName().substring(0, currentFile.getName().length() - 3));
             if (!nLesson.exists()) {
                 nLesson.mkdirs();
             }
@@ -220,7 +222,7 @@ public class MigDocs2 {
                 e.printStackTrace();
                 throw new MigDocs2Exception("MIG_ERR_PNG");
             }*/
-
+        
         }
     }
     
@@ -255,6 +257,7 @@ public class MigDocs2 {
 
         }
         else if (toJSON.getName().substring(0,3).equals("CTG")){
+            
             try{
                 System.out.println("category");
                 File newFileJSON = new File (toJSON.toPath()+"/category.json");
