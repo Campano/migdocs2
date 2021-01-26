@@ -140,8 +140,15 @@ public class MigDocs2 {
                 if (!newCategory.exists()) {
                     newCategory.mkdirs();
                 }
-                File nJSON = new File(newPath + "/category.json");
+                
                 //écriture dans le json pas encore faite
+                String titleOfCategory = currentFile.getName();
+                titleOfCategory = titleOfCategory.replace('-', ' ');
+                titleOfCategory = titleOfCategory.substring(0, titleOfCategory.length() - 3);
+                titleOfCategory = titleOfCategory.substring(0, 1).toUpperCase() + titleOfCategory.substring(1);
+
+                writeJSON(newCategory,titleOfCategory);
+
                 dealFolderContent(currentFile, newCategory,newPath+ "/CTG_" + order + "_" + tmp);
             }
             //Si c'est un fichier ".md", et qu'il n'existe pas dans "leçons de ce dossier"
@@ -169,9 +176,10 @@ public class MigDocs2 {
             if (!nLesson.exists()) {
                 nLesson.mkdirs();
             }
-
+            writeJSON(nLesson,titleOfLesson);
+            File newMDLesson = new File(nLesson.toPath()+"/"+currentFile.getName());
             try{
-                copyFile(currentFile,nLesson);
+                copyFile(currentFile,newMDLesson);
             }
             catch(Exception e) {
                 e.printStackTrace();
@@ -217,6 +225,53 @@ public class MigDocs2 {
     
     public static void copyFile( File from, File to ) throws IOException {
         Files.copy( from.toPath(), to.toPath() );
+    }
+
+    public static void writeJSON (File toJSON,String title) throws MigDocs2Exception {
+        
+        if (toJSON.getName().substring(0,2)=="LSN"){
+            try{
+                File newFileJSON = new File (toJSON.toPath()+"/lesson.json");
+                PrintWriter newJSON = new PrintWriter(newFileJSON, "UTF-8");
+                newJSON.println("{");
+                newJSON.println("    \"ANY\": {");
+                newJSON.println("        \"title\": \""+title+"\",");
+                newJSON.println("        \"description\": \"\"");
+                newJSON.println("    },");
+                newJSON.println("    \"ENU\": {");
+                newJSON.println("        \"title\": \""+title+"\",");
+                newJSON.println("        \"description\": \"\"");
+                newJSON.println("    }");
+                newJSON.println("  }");
+                newJSON.close();
+            }
+            catch(Exception e){
+                e.printStackTrace();
+                throw new MigDocs2Exception("MIG_ERR_JSON_CREATION");
+            }
+
+        }
+        else if (toJSON.getName().substring(0,2)=="CTG"){
+            try{
+                File newFileJSON = new File (toJSON.toPath()+"/category.json");
+                PrintWriter newJSON = new PrintWriter(newFileJSON, "UTF-8");
+                newJSON.println("{");
+                newJSON.println("    \"ANY\": {");
+                newJSON.println("        \"title\": \""+title+"\",");
+                newJSON.println("        \"description\": \"\"");
+                newJSON.println("    },");
+                newJSON.println("    \"ENU\": {");
+                newJSON.println("        \"title\": \""+title+"\",");
+                newJSON.println("        \"description\": \"\"");
+                newJSON.println("    }");
+                newJSON.println("  }");
+                newJSON.close();
+            }
+            catch(Exception e){
+                e.printStackTrace();
+                throw new MigDocs2Exception("MIG_ERR_JSON_CREATION");
+            }
+        }
     }
     
 
