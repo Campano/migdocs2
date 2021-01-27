@@ -7,8 +7,8 @@ import java.util.regex.Pattern;
  */
 public class CheckDocs2 implements java.io.Serializable {
 	private static final long serialVersionUID = 1L;	
-	private final Pattern PATTERN_CATEGORY = Pattern.compile("^CTG_[0-9]+_[a-z\\-]+$");
-	private final Pattern PATTERN_LESSON = Pattern.compile("^LSN_[0-9]+_[a-z\\-]+$");
+	private final Pattern PATTERN_CATEGORY = Pattern.compile("^CTG_[0-9]+_[a-z0-9\\-]+$");
+	private final Pattern PATTERN_LESSON = Pattern.compile("^LSN_[0-9]+_[a-z0-9\\-]+$");
 	private final File contentDir;
 
 	public class TrnSyncException extends Exception{

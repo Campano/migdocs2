@@ -3,11 +3,12 @@ import java.util.regex.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+
 import java.nio.charset.Charset;
 
 public class MigDocs2 {
     private final static String DOCS_PATH = "/Users/antoinecruveilher/dev/docs/documentation";
-    private final static String DOCS2_PATH = "/Users/antoinecruveilher/Desktop";
+    private final static String DOCS2_PATH = "/Users/antoinecruveilher/Desktop/docs2";
     // private final static String DOCS_PATH = "/Users/simoncampano/dev/simplicite.io/docs.simplicite.io/documentation";
     // private final static String DOCS2_PATH = "/Users/simoncampano/dev/tmp";
     
@@ -26,10 +27,14 @@ public class MigDocs2 {
             System.out.println(e.getMessage());
         }
 
-        /*
-         * try{ new CheckDocs2(docs2Path); } catch(Exception e){
-         * System.out.println(e.getMessage()); }
-         */
+        
+        try{ 
+            new CheckDocs2(DOCS2_PATH); 
+        } 
+        catch(Exception e){
+            System.out.println(e.getMessage()); 
+        }
+        System.out.println("Success !!!!!");
     }
 
     private static void migrate() throws MigDocs2Exception {
@@ -77,7 +82,7 @@ public class MigDocs2 {
             //Fonction "Traiter contenu dossier" ("répertoire origine", "CTG_50_docs")
             
         }
-
+        writeJSON(theDir,"docs");
         //String newPath = DOCS2_PATH+"/CTG_50_docs";
 
         dealFolderContent(origin, theDir);
@@ -147,9 +152,12 @@ public class MigDocs2 {
                 
                 File nextCategory = new File (target.toPath()+ "/CTG_" + order + "_" + tmp);
                 //newPath+ "/CTG_" + order + "_" + tmp
+                if (!nextCategory.exists()) {
+                    nextCategory.mkdirs();
+                }
                 titleOfCategory = titleOfCategory.substring(0, 1).toUpperCase() + titleOfCategory.substring(1);
 
-                writeJSON(newCategory,titleOfCategory);
+                writeJSON(nextCategory,titleOfCategory);
 
                 dealFolderContent(currentFile, nextCategory);
                 
