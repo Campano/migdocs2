@@ -15,7 +15,7 @@ public class MigDocs2 {
     private final static Pattern DIR_NAME_PATTERN = Pattern.compile("[a-z-]+");
     private final static Pattern PNG_FILE_PATTERN = Pattern.compile(".*?([a-zA-Z0-9_-]+\\.png).*");
     private static ArrayList < String > lessonOrder = new ArrayList < > ();
-    private static ArrayList < String > fichierTraites = new ArrayList < > ();
+    private static ArrayList < String > fichiersTraites = new ArrayList < > ();
     private final static int sizePrefixForJSON = 3;
     private final static String characterSet = "UTF-8";
 
@@ -38,7 +38,7 @@ public class MigDocs2 {
     private static void migrate() throws MigDocs2Exception {
         File origin = new File(DOCS_PATH);
         File target = new File(DOCS2_PATH);
-        ArrayList < String > fichierTraites = new ArrayList < > ();
+        //ArrayList < String > fichiersTraites = new ArrayList < > ();
         if (!origin.exists() || !target.exists())
             throw new MigDocs2Exception("MIG_ERR_BASE_DIR_NOT_FOUND");
         File indexMd = new File(origin, "index.md");
@@ -110,7 +110,7 @@ public class MigDocs2 {
         
         for (File currentFile: LessonsOfThisFile) {
             order += 10;
-            fichierTraites.add(currentFile.getName());
+            fichiersTraites.add(currentFile.getName());
             File newLessonDirectory = new File(target.toPath()+"/LSN_"+order+"_"+currentFile.getName().substring(0, currentFile.getName().length() - 3));
             if (!newLessonDirectory.exists()) {
                 newLessonDirectory.mkdirs();
@@ -132,12 +132,13 @@ public class MigDocs2 {
                         PNGimport = m.group(1);
                     }
                     if(!PNGimport.equals("")){
-                        File FilePNGImport = new File (DOCS_PATH+"/"+PNGimport);
-                        if (FilePNGImport.exists()){
-                            copyFile(origin,newLessonDirectory);
+                        File filePNGImport = new File (origin.toPath()+"/"+PNGimport);
+                        File newPlaceOfPNG = new File (newLessonDirectory.toPath()+"/"+PNGimport);
+                        if (filePNGImport.exists()){
+                            copyFile(filePNGImport,newLessonDirectory);
                         }
                     }
-                    fichierTraites.add(PNGimport);                
+                    fichiersTraites.add(PNGimport);                
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -178,6 +179,7 @@ public class MigDocs2 {
         try{
                 PrintWriter newJSON = new PrintWriter(jsonFile, characterSet);
                 newJSON.println("{");
+                newJSON.println("    \"display\": \"LINEAR\",");
                 newJSON.println("    \"ANY\": {");
                 newJSON.println("        \"title\": \""+title+"\",");
                 newJSON.println("        \"description\": \"\"");
