@@ -8,15 +8,16 @@ import java.nio.charset.Charset;
 
 public class MigDocs2 {
     private final static String DOCS_PATH = "/Users/antoinecruveilher/dev/docs/documentation";
-    private final static String DOCS2_PATH = "/Users/antoinecruveilher/Desktop/docs2";
+    private final static String DOCS2_PATH = "/Users/antoinecruveilher/Desktop/DocsForSimplicity/docs2";
     // private final static String DOCS_PATH = "/Users/simoncampano/dev/simplicite.io/docs.simplicite.io/documentation";
     // private final static String DOCS2_PATH = "/Users/simoncampano/dev/tmp";
     private final static Pattern MD_FILE_PATTERN = Pattern.compile(".*?([a-zA-Z0-9_-]+\\.md).*");
     private final static Pattern DIR_NAME_PATTERN = Pattern.compile("[a-z-]+");
     private final static Pattern PNG_FILE_PATTERN = Pattern.compile(".*?([a-zA-Z0-9_-]+\\.png).*");
-    public static ArrayList < String > lessonOrder = new ArrayList < > ();
-    public static ArrayList < String > fichierTraites = new ArrayList < > ();
-    public final static int sizePrefixForJSON = 3;
+    private static ArrayList < String > lessonOrder = new ArrayList < > ();
+    private static ArrayList < String > fichierTraites = new ArrayList < > ();
+    private final static int sizePrefixForJSON = 3;
+    private final static String characterSet = "UTF-8";
 
     public static void main(String[] args) {
         System.out.println("Welcome to MigDocs2 tool");
@@ -44,7 +45,7 @@ public class MigDocs2 {
         if (!indexMd.exists())
             throw new MigDocs2Exception("MIG_ERR_INDEX_MD_NOT_FOUND", indexMd);
         try {
-            for (String line: Files.readAllLines(Paths.get(indexMd.getPath()), Charset.forName("UTF-8"))) {
+            for (String line: Files.readAllLines(Paths.get(indexMd.getPath()), Charset.forName(characterSet))) {
                 Matcher m = MD_FILE_PATTERN.matcher(line);
                 if (m.matches()) {
                     lessonOrder.add(m.group(1));
@@ -102,7 +103,7 @@ public class MigDocs2 {
                 createJSON(nextCategory,tmp.substring(0, 1).toUpperCase() + tmp.substring(1));
                 dealFolderContent(currentFile, nextCategory); 
             }
-            else if (getExtension(currentFile) == "md" && !LessonsOfThisFile.contains(currentFile.getName())) {
+            else if (getExtension(currentFile).equals("md") && !LessonsOfThisFile.contains(currentFile)) {
                 LessonsOfThisFile.add(currentFile);
             }
         }
@@ -124,7 +125,7 @@ public class MigDocs2 {
                 throw new MigDocs2Exception("MIG_ERR_COPY_MD");
             }
             try {   
-                for (String line: Files.readAllLines(Paths.get(currentFile.getPath()), Charset.forName("UTF-8"))) {
+                for (String line: Files.readAllLines(Paths.get(currentFile.getPath()), Charset.forName(characterSet))) {
                     String PNGimport = "";
                     Matcher m = PNG_FILE_PATTERN.matcher(line);
                     if (m.matches()) {
@@ -173,9 +174,9 @@ public class MigDocs2 {
         }        
     }
 
-    public static void writeJSON (File JsonStatham,String title)throws MigDocs2Exception{
+    public static void writeJSON (File jsonFile,String title)throws MigDocs2Exception{
         try{
-                PrintWriter newJSON = new PrintWriter(JsonStatham, "UTF-8");
+                PrintWriter newJSON = new PrintWriter(jsonFile, characterSet);
                 newJSON.println("{");
                 newJSON.println("    \"ANY\": {");
                 newJSON.println("        \"title\": \""+title+"\",");
@@ -212,7 +213,7 @@ public class MigDocs2 {
             super(msg);
             this.additional = f.getPath();
         }
-
+        @Override
         public String getMessage() {
             return super.getMessage() + " : " + additional;
         }
