@@ -14,6 +14,7 @@ public class MigDocs2 {
     private final static Pattern MD_FILE_PATTERN = Pattern.compile(".*?([a-zA-Z0-9_-]+\\.md).*");
     private final static Pattern DIR_NAME_PATTERN = Pattern.compile("[a-z-]+");
     private final static Pattern PNG_FILE_PATTERN = Pattern.compile(".*?([a-zA-Z0-9_-]+\\.png).*");
+    private final static Pattern JPG_FILE_PATTERN = Pattern.compile(".*?([a-zA-Z0-9_-]+\\.jpg).*");
     private static ArrayList < String > lessonOrder = new ArrayList < > ();
     private static ArrayList < String > fichiersTraites = new ArrayList < > ();
     private final static int sizePrefixForJSON = 3;
@@ -126,19 +127,26 @@ public class MigDocs2 {
             }
             try {   
                 for (String line: Files.readAllLines(Paths.get(currentFile.getPath()), Charset.forName(characterSet))) {
-                    String PNGimport = "";
-                    Matcher m = PNG_FILE_PATTERN.matcher(line);
-                    if (m.matches()) {
-                        PNGimport = m.group(1);
-                    }
-                    if(!PNGimport.equals("")){
-                        File filePNGImport = new File (origin.toPath()+"/"+PNGimport);
-                        File newPlaceOfPNG = new File (newLessonDirectory.toPath()+"/"+PNGimport);
-                        if (filePNGImport.exists()){
-                            copyFile(filePNGImport,newLessonDirectory);
+                    String image = "";
+                    Matcher mPNG = PNG_FILE_PATTERN.matcher(line);
+                    Matcher mJPG = JPG_FILE_PATTERN.matcher(line);
+                    if (mPNG.matches()) {
+                        image = mPNG.group(1);
+                        File fileimage = new File (origin.toPath()+"/"+image);
+                        File newPlaceOfPNG = new File (newLessonDirectory.toPath()+"/"+image);
+                        if (fileimage.exists()){
+                            copyFile(fileimage,newPlaceOfPNG);
                         }
                     }
-                    fichiersTraites.add(PNGimport);                
+                    if (mJPG.matches()) {
+                        image = mJPG.group(1);
+                        File fileimage = new File (origin.toPath()+"/"+image);
+                        File newPlaceOfJPG = new File (newLessonDirectory.toPath()+"/"+image);
+                        if (fileimage.exists()){
+                            copyFile(fileimage,newPlaceOfJPG);
+                        }
+                    }
+                    fichiersTraites.add(image);                
                 }
             } catch (Exception e) {
                 e.printStackTrace();
