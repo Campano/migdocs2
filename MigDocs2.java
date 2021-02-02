@@ -9,10 +9,12 @@ import java.nio.charset.Charset;
 public class MigDocs2 {
     private final static String DOCS_PATH = "/Users/antoinecruveilher/dev/docs/documentation";
     private final static String DOCS2_PATH = "/Users/antoinecruveilher/Desktop/DocsForSimplicity/docs2";
+    private final static String TARGET_DIRECTORY = "docs2";
     // private final static String DOCS_PATH = "/Users/simoncampano/dev/simplicite.io/docs.simplicite.io/documentation";
     // private final static String DOCS2_PATH = "/Users/simoncampano/dev/tmp";
     private final static Pattern MD_FILE_PATTERN = Pattern.compile(".*?([a-zA-Z0-9_-]+\\.md).*");
     private final static Pattern DIR_NAME_PATTERN = Pattern.compile("[a-z-]+");
+    private final static Pattern MD_PATH_PATTERN = Pattern.compile("[0-9a-z-/.]+\\.md");
     private final static Pattern PNG_FILE_PATTERN = Pattern.compile(".*?([a-zA-Z0-9_-]+\\.png).*");
     private final static Pattern JPG_FILE_PATTERN = Pattern.compile(".*?([a-zA-Z0-9_-]+\\.jpg).*");
     private static ArrayList < String > lessonOrder = new ArrayList < > ();
@@ -118,6 +120,9 @@ public class MigDocs2 {
             }
             createJSON(newLessonDirectory,getTitleOfLesson(currentFile.getName()));
             File newMDLesson = new File(newLessonDirectory.toPath()+"/"+currentFile.getName());
+            /////////////////
+
+
             try{
                 copyFile(currentFile,newMDLesson);
             }
@@ -125,11 +130,15 @@ public class MigDocs2 {
                 e.printStackTrace();
                 throw new MigDocs2Exception("MIG_ERR_COPY_MD");
             }
+
+            
+            //////////////////
             try {   
                 for (String line: Files.readAllLines(Paths.get(currentFile.getPath()), Charset.forName(characterSet))) {
                     String image = "";
                     Matcher mPNG = PNG_FILE_PATTERN.matcher(line);
                     Matcher mJPG = JPG_FILE_PATTERN.matcher(line);
+                    Matcher linkPath = MD_PATH_PATTERN.matcher(line);
                     if (mPNG.matches()) {
                         image = mPNG.group(1);
                         File fileimage = new File (origin.toPath()+"/"+image);
@@ -146,7 +155,12 @@ public class MigDocs2 {
                             copyFile(fileimage,newPlaceOfJPG);
                         }
                     }
-                    fichiersTraites.add(image);                
+                    if (linkPath.find()){
+                        String [] elements = newMDLesson.toString().split(TARGET_DIRECTORY);
+                        line.replaceAll("[0-9a-z-/.]+\\.md", ".."+elements[1]);
+                    }
+                    fichiersTraites.add(image);
+
                 }
             } catch (Exception e) {
                 e.printStackTrace();
