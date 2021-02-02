@@ -157,7 +157,9 @@ public class MigDocs2 {
                     }
                     if (linkPath.find()){
                         String [] elements = newMDLesson.toString().split(TARGET_DIRECTORY);
-                        line.replaceAll("[0-9a-z-/.]+\\.md", ".."+elements[1]);
+                        System.out.println(elements[1]);
+                        line = line.replaceAll("[0-9a-z-/.]+\\.md", ".."+elements[1]);
+
                     }
                     fichiersTraites.add(image);
 
