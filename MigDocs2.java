@@ -132,7 +132,6 @@ public class MigDocs2 {
             BufferedReader br = null;
             PrintWriter pw = null; 
             try {
-                
                 br = new BufferedReader(new FileReader(currentFile));
                 pw =  new PrintWriter(new FileWriter(newMDLesson));
                 String line;
@@ -140,7 +139,6 @@ public class MigDocs2 {
                     Matcher linkPath = MD_PATH_PATTERN.matcher(line);
                     if (linkPath.find()){
                         String [] elements = newMDLesson.toString().split(TARGET_DIRECTORY);
-                        System.out.println(elements[1]);
                         line = line.replaceAll("[0-9a-z-/.]+\\.md", ".."+elements[1]);
                     }
                         pw.println(line); 
@@ -154,7 +152,8 @@ public class MigDocs2 {
                 for (String line: Files.readAllLines(Paths.get(currentFile.getPath()), Charset.forName(characterSet))) {
                     String image = "";
                     Matcher mPNG = PNG_FILE_PATTERN.matcher(line);
-                    Matcher mJPG = JPG_FILE_PATTERN.matcher(line);                    if (mPNG.matches()) {
+                    Matcher mJPG = JPG_FILE_PATTERN.matcher(line);                    
+                    if (mPNG.matches()) {
                         image = mPNG.group(1);
                         File fileimage = new File (origin.toPath()+"/"+image);
                         File newPlaceOfPNG = new File (newLessonDirectory.toPath()+"/"+image);

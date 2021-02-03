@@ -101,7 +101,8 @@ public class CheckDocs2 implements java.io.Serializable {
 				if(!child.getName().equals(lessonCode+".webm"))
 					throw new TrnSyncException("TRN_SYNC_LESSON_VIDEO_NAME_INCONSISTENT", child);
 			}
-			else if(!getExtension(child.getName()).equals("png")){
+			
+			else if(!getExtension(child.getName()).equals("png") && !getExtension(child.getName()).equals("jpg")){
 				throw new TrnSyncException("TRN_SYNC_LESSON_EXTENSION_NOT_ALLOWED", child);
 			}
 		}
