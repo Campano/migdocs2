@@ -109,8 +109,7 @@ public class MigDocs2 {
             else if (getExtension(currentFile).equals("md") && !LessonsOfThisFile.contains(currentFile)) {
                 LessonsOfThisFile.add(currentFile);
             }
-        }
-        
+        }       
         for (File currentFile: LessonsOfThisFile) {
             order += 10;
             fichiersTraites.add(currentFile.getName());
@@ -123,23 +122,39 @@ public class MigDocs2 {
             /////////////////
 
 
-            try{
+            /*try{
                 copyFile(currentFile,newMDLesson);
             }
             catch(Exception e) {
                 e.printStackTrace();
                 throw new MigDocs2Exception("MIG_ERR_COPY_MD");
+            }*/
+            BufferedReader br = null;
+            PrintWriter pw = null; 
+            try {
+                
+                br = new BufferedReader(new FileReader(currentFile));
+                pw =  new PrintWriter(new FileWriter(newMDLesson));
+                String line;
+                while ((line = br.readLine()) != null) {
+                    Matcher linkPath = MD_PATH_PATTERN.matcher(line);
+                    if (linkPath.find()){
+                        String [] elements = newMDLesson.toString().split(TARGET_DIRECTORY);
+                        System.out.println(elements[1]);
+                        line = line.replaceAll("[0-9a-z-/.]+\\.md", ".."+elements[1]);
+                    }
+                        pw.println(line); 
+                }
+                br.close();
+                pw.close();
+            }catch (Exception e) {
+                e.printStackTrace();
             }
-
-            
-            //////////////////
             try {   
                 for (String line: Files.readAllLines(Paths.get(currentFile.getPath()), Charset.forName(characterSet))) {
                     String image = "";
                     Matcher mPNG = PNG_FILE_PATTERN.matcher(line);
-                    Matcher mJPG = JPG_FILE_PATTERN.matcher(line);
-                    Matcher linkPath = MD_PATH_PATTERN.matcher(line);
-                    if (mPNG.matches()) {
+                    Matcher mJPG = JPG_FILE_PATTERN.matcher(line);                    if (mPNG.matches()) {
                         image = mPNG.group(1);
                         File fileimage = new File (origin.toPath()+"/"+image);
                         File newPlaceOfPNG = new File (newLessonDirectory.toPath()+"/"+image);
@@ -154,15 +169,8 @@ public class MigDocs2 {
                         if (fileimage.exists()){
                             copyFile(fileimage,newPlaceOfJPG);
                         }
-                    }
-                    if (linkPath.find()){
-                        String [] elements = newMDLesson.toString().split(TARGET_DIRECTORY);
-                        System.out.println(elements[1]);
-                        line = line.replaceAll("[0-9a-z-/.]+\\.md", ".."+elements[1]);
-
-                    }
+                    } 
                     fichiersTraites.add(image);
-
                 }
             } catch (Exception e) {
                 e.printStackTrace();
