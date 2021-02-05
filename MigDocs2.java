@@ -141,13 +141,14 @@ public class MigDocs2 {
                         /*String [] elements = newMDLesson.toString().split(TARGET_DIRECTORY);
                         elements[1]=elements[1].substring(0, elements[1].length()-3);*/
                         Matcher nameCTG = DIR_NAME_PATTERN.matcher(target.getName());
+                        System.out.println(linkPath.group(0));
                         if(nameCTG.find()){
                             if(!nameCTG.group(0).equals("docs")){
                                 line = line.replaceAll("[0-9a-z-/.]+\\.md", "lesson/docs/"+nameCTG.group(0)+"/"+newMDLesson.getName().substring(0, newMDLesson.getName().length()-3));
                             }
-                                else{
-                            line = line.replaceAll("[0-9a-z-/.]+\\.md", "lesson/"+nameCTG.group(0)+"/"+newMDLesson.getName().substring(0, newMDLesson.getName().length()-3));
-                                }
+                            else{
+                                line = line.replaceAll("[0-9a-z-/.]+\\.md", "lesson/"+nameCTG.group(0)+"/"+newMDLesson.getName().substring(0, newMDLesson.getName().length()-3));
+                            }
                         }
                     }
 
